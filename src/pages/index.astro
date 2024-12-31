@@ -1,11 +1,42 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
+import MainLayout from "../layouts/MainLayout.astro"
+import SearchForm from "../components/SearchForm.astro"
+import MostRecentArticleCard from "../components/MostRecentArticleCard.astro"
+import { getCollection } from 'astro:content';
+import type { CollectionEntry } from "astro:content";
+import ArticleCard from "../components/ArticleCard.astro";
+import { HOMEPAGE_ARTICLE_LIMIT } from "../constants";
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+const allBlogArticles: CollectionEntry<'blog'>[] = (await getCollection('blog'))
+  .sort((a:CollectionEntry<'blog'>, b:CollectionEntry<'blog'>) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const mostRecentArticle : CollectionEntry<'blog'> = allBlogArticles[0];
+const otherArticle:CollectionEntry<'blog'>[]= allBlogArticles.slice(1);
 ---
 
-<Layout>
-	<Welcome />
-</Layout>
+
+<MainLayout title="Main Page">
+  <section class="container mx-auto max-w-screen-xl mt-10 px-8">
+    <!-- Top Grid -->
+  <div class="grid grid-cols-1 gap-5 lg:grid-cols-2">
+      <div>
+        <h1 class="text-5xl font-bold mt-4 mb-8 leading-tight xl:text-6xl">
+          Articles, Stories & Tutorials for Tech People
+        </h1>
+        <SearchForm/>
+    </div>
+
+    <!-- Most Recent Article -->
+   <MostRecentArticleCard article={mostRecentArticle}/>
+  </div>
+
+  <!-- Main Grid -->
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {otherArticle.slice(0, HOMEPAGE_ARTICLE_LIMIT).map(article => (
+        <ArticleCard article={article}/>
+      ))}
+    </div>
+  </section>
+</MainLayout>
+  
+    

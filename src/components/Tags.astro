@@ -1,0 +1,13 @@
+---
+import { capitalize } from '../utils';
+const { tags } = Astro.props;
+const oddTags = "px-2 py-1 bg-blue-500 text-white rounded-full text-xs hover:opacity-90"
+const evenTags = "px-2 py-1 bg-indigo-500 text-white rounded-full text-xs hover:opacity-90"
+---
+
+
+<div class="flex flex-wrap gap-2">
+    {tags.map((tag: string, index: number) => (
+        <span class={index % 2 === 0 ? evenTags : oddTags}><a href={'/articles/tags/' + tag}>#{capitalize(tag)}</a></span>
+    ))}
+</div>
